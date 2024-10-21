@@ -71,7 +71,7 @@ const MyEvents = () => {
                   description,
                 } = event;
                 return (
-                  <tr key={id} className="text-pink-300">
+                  <tr key={id} className="text-slate-300">
                     <td className="h-12 px-6 text-md transition duration-300 border-t border-l first:border-l-0 border-pink-100 stroke-slate-500 text-slate-500">
                       {index + 1}.
                     </td>
@@ -79,7 +79,7 @@ const MyEvents = () => {
                       {eventName}
                     </td>
                     <td className="h-12 px-6 text-md transition duration-300 border-t border-l first:border-l-0 border-pink-100 stroke-slate-500 text-slate-500">
-                      {startDate} - {endDate}
+                      {startDate} to {endDate}
                     </td>
                     <td className="h-12 px-6 text-md transition duration-300 border-t border-l first:border-l-0 border-pink-100 stroke-slate-500 text-slate-500">
                       {startTime} - {endTime}

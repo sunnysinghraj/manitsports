@@ -1,10 +1,24 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import EventContext from "../../context/myContext";
+import { deleteDoc, doc } from "firebase/firestore";
+import { fireDB } from "../../firebase/FirebaseConfig";
+import toast from "react-hot-toast";
 
 const MyEvents = () => {
   const context = useContext(EventContext);
   const { getAllEvents } = context;
+
+  // Delete event function
+  const deleteEvent = async (id) => {
+    try {
+      await deleteDoc(doc(fireDB, "events", id)); 
+      toast.success("Event deleted successfully");
+    } catch (error) {
+      console.error("Error deleting event: ", error);
+      toast.error("Failed to delete event");
+    }
+  };
 
   return (
     <div className="p-5">
@@ -95,10 +109,10 @@ const MyEvents = () => {
                       {description}
                     </td>
                     <td className="h-12 px-6 text-md border-t border-l first:border-l-0 border-slate-100">
-                      <Link to={`/editevent/${id}`} className="text-blue-500 hover:underline">Edit</Link>
+                      <Link to={`/updateevent/${id}`} className="text-blue-500 hover:underline">Edit</Link>
                       <span className="mx-2">|</span>
                       <button
-                        onClick={() => {/* Your delete function here */}}
+                        onClick={() => deleteEvent(id)}
                         className="text-red-500 hover:underline"
                       >
                         Delete

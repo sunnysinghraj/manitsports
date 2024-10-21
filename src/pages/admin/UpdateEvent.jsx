@@ -1,29 +1,55 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fireDB } from "../../firebase/FirebaseConfig"; 
-import { doc, setDoc } from "firebase/firestore"; // Import Firestore functions
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import Layout from "../../components/layout/Layout";
-import { v4 as uuidv4 } from "uuid"; // Optional: Use UUID for more control over unique IDs
 
-const AddEvent = () => {
+const UpdateEvent = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm();
   const navigate = useNavigate();
+  const { id } = useParams(); // Get event ID from URL
+
+  // Fetch the event data when the component is mounted
+  const fetchEvent = async () => {
+    try {
+      const eventDoc = await getDoc(doc(fireDB, "events", id));
+      if (eventDoc.exists()) {
+        const eventData = eventDoc.data();
+        // Set the form fields with event data
+        setValue("eventName", eventData.eventName);
+        setValue("startDate", eventData.startDate);
+        setValue("endDate", eventData.endDate);
+        setValue("startTime", eventData.startTime);
+        setValue("endTime", eventData.endTime);
+        setValue("place", eventData.place);
+        setValue("description", eventData.description);
+      } else {
+        toast.error("Event not found.");
+        navigate("/events");
+      }
+    } catch (error) {
+      console.error("Error fetching event:", error);
+      toast.error("Failed to fetch event.");
+    }
+  };
+
+  useEffect(() => {
+    fetchEvent();
+  }, []);
 
   const onSubmit = async (data) => {
     const { eventName, startDate, endDate, startTime, endTime, place, description } = data;
 
     try {
-      // Generate a unique ID for the event
-      const uniqueID = uuidv4(); // Alternatively, you can omit this and let Firestore auto-generate the ID
-      
-      // Firestore: Store event details with unique ID
-      await setDoc(doc(fireDB, "events", uniqueID), {
+      // Update the event in Firestore using the same event ID from URL (params)
+      await setDoc(doc(fireDB, "events", id), {
         eventName,
         startDate,
         endDate,
@@ -31,23 +57,24 @@ const AddEvent = () => {
         endTime,
         place,
         description,
-        createdAt: new Date(),
-        id: uniqueID, // Store the ID in the document as well
-      });
-      toast.success("Event added successfully!");
-      navigate("/events"); // Redirect to events page or desired route
+        updatedAt: new Date(), // Track the update time
+        id, // Keep the same event ID
+      }, { merge: true }); // Use merge to only update the fields provided without overwriting the document
+
+      toast.success("Event updated successfully!");
+      navigate("/events");
     } catch (error) {
-      console.error("Error writing to Firestore:", error);
-      toast.error("Failed to add event. Please try again.");
+      console.error("Error updating event:", error);
+      toast.error("Failed to update event. Please try again.");
     }
   };
 
   return (
     <Layout>
       <div className="flex justify-center items-center min-h-screen my-20">
-        <div className="add-event-form bg-slate-100 px-6 lg:px-12 py-8 border border-slate-400 rounded-xl shadow-md">
+        <div className="update-event-form bg-slate-100 px-6 lg:px-12 py-8 border border-slate-400 rounded-xl shadow-md">
           <h2 className="text-center text-3xl font-bold text-slate-600 mb-6">
-            Add Event
+            Update Event
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -175,7 +202,7 @@ const AddEvent = () => {
               disabled={isSubmitting}
               className="bg-slate-600 text-white px-4 py-2 rounded-md w-full hover:bg-slate-800 transition-colors"
             >
-              {isSubmitting ? "Adding Event..." : "Add Event"}
+              {isSubmitting ? "Updating Event..." : "Update Event"}
             </button>
           </form>
         </div>
@@ -184,4 +211,4 @@ const AddEvent = () => {
   );
 };
 
-export default AddEvent;
+export default UpdateEvent;

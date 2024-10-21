@@ -17,6 +17,7 @@ import EventState from "./context/EventState";
 import  ProtectedRouteForAdmin  from "./protectedRoute/ProtectedRouteForAdmin";
 import  ProtectedRouteForUser  from "./protectedRoute/ProtectedRouteForUser";
 import AddEvents from "./pages/admin/AddEvents";
+import UpdateEvent from "./pages/admin/UpdateEvent";
 function App() {
   return (
     <EventState>
@@ -30,34 +31,36 @@ function App() {
           <Route path="/register" element={<Signup />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/teams" element={<Teams />} />
-          {/* <Route
+          <Route
             path="/user-dashboard"
             element={
               <ProtectedRouteForUser>
                 <UserDashboard />
               </ProtectedRouteForUser>
             }
-          /> */}
-          {/* <Route                                                 
+          />
+          <Route                                                 
             path="/admin-dashboard"
             element={
-              <ProtectedRouteForUser>
+              <ProtectedRouteForAdmin>
                 <AdminDashboard />
-              </ProtectedRouteForUser>
+              </ProtectedRouteForAdmin>
             }
-          /> */}
-          {/* <Route
+          />
+          <Route
             path="/addevents"
             element={
-              <ProtectedRouteForUser>
+              <ProtectedRouteForAdmin>
                 <AddEvents />
-              </ProtectedRouteForUser>
+              </ProtectedRouteForAdmin>
             }
-          /> */}
+          />
+          <Route path="/updateevent/:id" element={
+            <ProtectedRouteForAdmin>
+              <UpdateEvent />
+            </ProtectedRouteForAdmin>
+          } />
           <Route path="/events" element={<Events />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/addevents" element={<AddEvents />} />
         </Routes>
       </Router>
     </EventState>
