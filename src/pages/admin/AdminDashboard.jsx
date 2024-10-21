@@ -1,7 +1,30 @@
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
+import EventDetails from "./EventDetails";
 
 const AdminDashboard = () => {
+  const [admin, setAdmin] = useState(null);
+
+  // Effect to load admin data from local storage
+  useEffect(() => {
+    const storedAdmin = localStorage.getItem("userData");
+    console.log("Stored Admin:", storedAdmin); // Debugging log
+
+    if (storedAdmin) {
+      try {
+        const parsedAdmin = JSON.parse(storedAdmin);
+        console.log("Parsed Admin:", parsedAdmin); // Debugging log
+        // Check if the user is an admin based on the "work" field
+        if (parsedAdmin.work === "Admin") {
+          setAdmin(parsedAdmin);
+        }
+      } catch (error) {
+        console.error("Error parsing admin from localStorage:", error);
+      }
+    }
+  }, []);
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-5 lg:py-8 my-10">
@@ -19,24 +42,33 @@ const AdminDashboard = () => {
             </div>
             {/* Text */}
             <div className="">
-              <h1 className="text-center text-lg text-slate-600">
-                <span className="font-bold">Admin Name :</span> Admin User
-              </h1>
-              <h1 className="text-center text-lg text-slate-600">
-                <span className="font-bold">Email :</span> admin@example.com
-              </h1>
+              {admin ? (
+                <>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Admin Name :</span> {admin.name}
+                  </h1>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Email :</span> {admin.email}
+                  </h1>
+                </>
+              ) : (
+                <h1 className="text-center text-lg text-slate-600">
+                  Admin details not found.
+                </h1>
+              )}
             </div>
             {/* Navigate Button */}
             <div className="flex justify-center mt-5">
-              <Link to="/events">
+              <Link to="/AddEvents">
                 <button className="bg-slate-500 hover:bg-slate-600 text-white py-2 px-4 rounded-md font-bold">
-                  Go to Events
+                  AddEvents
                 </button>
               </Link>
             </div>
           </div>
         </div>
       </div>
+      <EventDetails />
     </Layout>
   );
 };

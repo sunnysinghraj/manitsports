@@ -74,6 +74,16 @@ const Signup = () => {
   const onSubmit = async (data) => {
     const { name, scholarNo, branch, sport, role, email, password } = data;
 
+    // Show confirmation dialog
+    const confirmation = window.confirm(
+      `Please confirm your details:\n\nName: ${name}\nScholar Number: ${scholarNo}\nBranch: ${branch}\nSport: ${sport}\nRole: ${role}\nEmail: ${email}\n\nDo you want to proceed with the sign-up?`
+    );
+
+    if (!confirmation) {
+      toast.info("Sign-up cancelled.");
+      return; // Cancel sign-up if user does not confirm
+    }
+
     try {
       // Check if scholar number or email already exists
       const existingUser = await checkExistingUser(email, scholarNo);
@@ -99,17 +109,15 @@ const Signup = () => {
         sport,
         role,
         email,
-        work:"User",
+        work: "User",
         createdAt: new Date(),
-      }); 
+      });
       toast.success("Signup successful!");
-      navigate("/dashboard"); // Redirect to dashboard or desired route
-    }catch (error) {
+      navigate("/login"); // Redirect to dashboard or desired route
+    } catch (error) {
       console.error("Error writing to Firestore:", error);
       toast.error("Failed to store user data in Firestore. Please try again.");
     }
-    console.log(import.meta.env.VITE_FIREBASE_API_KEY);
-
   };
 
   return (
@@ -187,12 +195,11 @@ const Signup = () => {
                 <option value="">Select Branch</option>
                 <option value="CSE">CSE</option>
                 <option value="ECE">ECE</option>
-                <option value="ELECTRICAL">ELECTRICAL</option>
-                <option value="MECHANICAL">MECHANICAL</option>
-                <option value="CIVIL">CIVIL</option>
-                <option value="MME">MME</option>
-                <option value="CHEMICAL">CHEMICAL</option>
-                <option value="other">BARCH</option>
+                <option value="EEE">EEE</option>
+                <option value="ME">ME</option>
+                <option value="CE">CE</option>
+                <option value="CHE">CHE</option>
+                <option value="MCE">MCE</option>
               </select>
               {errors.branch && (
                 <p className="text-red-500 text-sm mt-1">
@@ -232,10 +239,10 @@ const Signup = () => {
             <div className="mb-4">
               <select
                 {...register("role", { required: "Role is required" })}
+                disabled={roleOptions.length === 0} // Disable if no options are available
                 className={`bg-slate-100 border ${
                   errors.role ? "border-red-500" : "border-slate-400"
                 } px-4 py-2 w-full rounded-md outline-none`}
-                disabled={!selectedSport} // Disable if no sport selected
               >
                 <option value="">Select Role</option>
                 {roleOptions.map((role) => (
@@ -245,7 +252,9 @@ const Signup = () => {
                 ))}
               </select>
               {errors.role && (
-                <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.role.message}
+                </p>
               )}
             </div>
 
@@ -257,8 +266,8 @@ const Signup = () => {
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
-                    value: /^\S+@\S+\.\S+$/,
-                    message: "Email is invalid",
+                    value: /^\S+@\S+$/i,
+                    message: "Invalid email address",
                   },
                 })}
                 className={`bg-slate-100 border ${
@@ -288,8 +297,19 @@ const Signup = () => {
                 className={`bg-slate-100 border ${
                   errors.password ? "border-red-500" : "border-slate-400"
                 } px-4 py-2 w-full rounded-md outline-none placeholder-slate-400`}
-                autoComplete="new-password" // Added autocomplete attribute
               />
+              <div className="flex items-center mt-2">
+                <input
+                  type="checkbox"
+                  id="show-password"
+                  checked={showPassword}
+                  onChange={() => setShowPassword((prev) => !prev)}
+                  className="mr-2"
+                />
+                <label htmlFor="show-password" className="text-gray-700">
+                  Show Password
+                </label>
+              </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.password.message}
@@ -297,35 +317,23 @@ const Signup = () => {
               )}
             </div>
 
-            {/* Show Password Checkbox */}
-            <div className="flex items-center mb-4">
-              <input
-                type="checkbox"
-                onChange={() => setShowPassword((prev) => !prev)}
-                className="mr-2"
-              />
-              <label className="text-slate-600">Show Password</label>
-            </div>
-
-            {/* Submit Button */}
+            {/* Sign Up Button */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-slate-500 hover:bg-slate-700 text-white px-4 py-2 rounded-md w-full"
+              className="bg-slate-600 text-white px-4 py-2 rounded-md w-full hover:bg-slate-800 transition-colors"
             >
               {isSubmitting ? "Signing Up..." : "Sign Up"}
             </button>
           </form>
 
-          {/* Link to Login */}
-          <div className="mt-4 text-center">
-            <p className="text-slate-600">
-              Already have an account?{" "}
-              <Link to="/login" className="text-slate-500 hover:text-slate-800">
-                Login
-              </Link>
-            </p>
-          </div>
+          {/* Redirect to Login */}
+          <p className="text-center mt-4">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-500">
+              Log In
+            </Link>
+          </p>
         </div>
       </div>
     </Layout>

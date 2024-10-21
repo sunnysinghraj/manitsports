@@ -1,6 +1,25 @@
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
 
 const UserDashboard = () => {
+  const [user, setUser] = useState(null);
+
+  // Effect to load user data from local storage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userData");
+    console.log("Stored User:", storedUser); // Debugging log
+
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        console.log("Parsed User:", parsedUser); // Debugging log
+        setUser(parsedUser);
+      } catch (error) {
+        console.error("Error parsing user from localStorage:", error);
+      }
+    }
+  }, []);
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-5 lg:py-8 my-10">
@@ -18,12 +37,35 @@ const UserDashboard = () => {
             </div>
             {/* text */}
             <div className="">
-              <h1 className="text-center text-lg text-slate-600">
-                <span className="font-bold">Name :</span> Sunny Kumar Singh
-              </h1>
-              <h1 className="text-center text-lg text-slate-600">
-                <span className="font-bold">Email :</span> rajsaurya761@gmail.com
-              </h1>
+              {user ? (
+                <>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Name :</span> {user.name}
+                  </h1>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Email :</span> {user.email}
+                  </h1>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Branch :</span> {user.branch}
+                  </h1>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Scholar No :</span> {user.scholarNo}
+                  </h1>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Sport :</span> {user.sport}
+                  </h1>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Role :</span> {user.role}
+                  </h1>
+                  <h1 className="text-center text-lg text-slate-600">
+                    <span className="font-bold">Work :</span> {user.work}
+                  </h1>
+                </>
+              ) : (
+                <h1 className="text-center text-lg text-slate-600">
+                  User details not found.
+                </h1>
+              )}
             </div>
           </div>
         </div>
