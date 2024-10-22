@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
-import { auth, fireDB } from "../../firebase/FirebaseConfig"; // Adjust the path as needed
+import { auth, fireDB } from "../../firebase/FirebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
   doc,
@@ -11,7 +11,7 @@ import {
   collection,
   where,
   getDocs,
-} from "firebase/firestore"; // Import Firestore functions
+} from "firebase/firestore";
 import toast from "react-hot-toast";
 import Layout from "../../components/layout/Layout";
 
@@ -24,14 +24,20 @@ const Signup = () => {
   } = useForm();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedSport, setSelectedSport] = useState(""); // Track selected sport
-  const [roleOptions, setRoleOptions] = useState([]); // Track dynamic role options
+  const [selectedSport, setSelectedSport] = useState("");
+  const [roleOptions, setRoleOptions] = useState([]);
 
   // Role options based on sport
   const roleMapping = {
     CRICKET: ["Batsman", "Bowler", "Allrounder", "Wicketkeeper"],
     FOOTBALL: ["Forward", "Midfielder", "Defender", "Goalkeeper"],
-    BASKETBALL: ["Point Guard", "Shooting Guard", "Small Forward", "Power Forward", "Center"],
+    BASKETBALL: [
+      "Point Guard",
+      "Shooting Guard",
+      "Small Forward",
+      "Power Forward",
+      "Center",
+    ],
     TENNIS: ["Singles Player", "Doubles Player"],
     BADMINTON: ["Singles Player", "Doubles Player"],
     VOLLEYBALL: ["Outside Hitter", "Setter", "Libero"],
@@ -42,15 +48,13 @@ const Signup = () => {
 
   // Function to handle sport change
   const handleSportChange = (e) => {
-    const sport = e.target.value;
+    const sport = e.target.value.toUpperCase(); // Convert to uppercase for role mapping
     setSelectedSport(sport);
     setRoleOptions(roleMapping[sport] || []);
     setValue("role", ""); // Clear the selected role when sport changes
   };
 
-  // Check if scholar number or email is already registered
   const checkExistingUser = async (email, scholarNo) => {
-    // Check if scholar number already exists
     const scholarDocRef = doc(fireDB, "users", scholarNo);
     const scholarDoc = await getDoc(scholarDocRef);
 
@@ -58,7 +62,6 @@ const Signup = () => {
       return true; // Scholar number already exists
     }
 
-    // Check for email existence by querying Firestore
     const emailQuery = query(
       collection(fireDB, "users"),
       where("email", "==", email)
@@ -74,7 +77,6 @@ const Signup = () => {
   const onSubmit = async (data) => {
     const { name, scholarNo, branch, sport, role, email, password } = data;
 
-    // Show confirmation dialog
     const confirmation = window.confirm(
       `Please confirm your details:\n\nName: ${name}\nScholar Number: ${scholarNo}\nBranch: ${branch}\nSport: ${sport}\nRole: ${role}\nEmail: ${email}\n\nDo you want to proceed with the sign-up?`
     );
@@ -85,14 +87,12 @@ const Signup = () => {
     }
 
     try {
-      // Check if scholar number or email already exists
       const existingUser = await checkExistingUser(email, scholarNo);
       if (existingUser) {
         toast.error("Email or Scholar Number already registered.");
         return;
       }
 
-      // Firebase Authentication: Create User with Email and Password
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -100,7 +100,6 @@ const Signup = () => {
       );
       const firebaseUser = userCredential.user;
 
-      // Firestore: Store additional user details
       await setDoc(doc(fireDB, "users", scholarNo), {
         uid: firebaseUser.uid,
         name,
@@ -113,7 +112,7 @@ const Signup = () => {
         createdAt: new Date(),
       });
       toast.success("Signup successful!");
-      navigate("/login"); // Redirect to dashboard or desired route
+      navigate("/login"); // Redirect to login
     } catch (error) {
       console.error("Error writing to Firestore:", error);
       toast.error("Failed to store user data in Firestore. Please try again.");
@@ -124,16 +123,13 @@ const Signup = () => {
     <Layout>
       <div className="flex justify-center items-center min-h-screen my-20 ">
         <div className="signup_Form bg-slate-100 px-6 lg:px-12 py-8 border border-slate-400 rounded-xl shadow-md">
-          {/* Heading */}
           <div className="mb-6">
             <h2 className="text-center text-3xl font-bold text-slate-600">
               Sign Up
             </h2>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Name Input */}
             <div className="mb-4">
               <input
                 type="text"
@@ -142,16 +138,13 @@ const Signup = () => {
                 className={`bg-slate-100 border ${
                   errors.name ? "border-red-500" : "border-slate-400"
                 } px-4 py-2 w-full rounded-md outline-none placeholder-slate-400`}
-                autoComplete="name" // Added autocomplete attribute
+                autoComplete="name"
               />
               {errors.name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
               )}
             </div>
 
-            {/* Scholar Number Input */}
             <div className="mb-4">
               <input
                 type="text"
@@ -162,29 +155,44 @@ const Signup = () => {
                     value: /^\d{9}$/,
                     message: "Scholar Number must be exactly 9 digits",
                   },
-                  maxLength: {
-                    value: 9,
-                    message: "Scholar Number cannot exceed 9 digits",
-                  },
-                  validate: (value) => value.length === 9 || "Scholar Number must be exactly 9 digits",
+                  validate: (value) =>
+                    value.length === 9 || "Scholar Number must be exactly 9 digits",
                 })}
                 onInput={(e) => {
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 9);
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 9);
                   e.target.value = value;
-                }} // Restrict input to 9 digits
+                }}
                 className={`bg-slate-100 border ${
                   errors.scholarNo ? "border-red-500" : "border-slate-400"
                 } px-4 py-2 w-full rounded-md outline-none placeholder-slate-400`}
-                autoComplete="scholarNo" // Added autocomplete attribute
+                autoComplete="scholarNo"
               />
               {errors.scholarNo && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.scholarNo.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.scholarNo.message}</p>
               )}
             </div>
 
-            {/* Branch Dropdown */}
+            <div className="mb-4">
+              <input
+                type="email"
+                placeholder="Email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Please enter a valid email address",
+                  },
+                })}
+                className={`bg-slate-100 border ${
+                  errors.email ? "border-red-500" : "border-slate-400"
+                } px-4 py-2 w-full rounded-md outline-none placeholder-slate-400`}
+                autoComplete="email"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              )}
+            </div>
+
             <div className="mb-4">
               <select
                 {...register("branch", { required: "Branch is required" })}
@@ -196,50 +204,47 @@ const Signup = () => {
                 <option value="CSE">CSE</option>
                 <option value="ECE">ECE</option>
                 <option value="EEE">EEE</option>
-                <option value="ME">ME</option>
-                <option value="CE">CE</option>
-                <option value="CHE">CHE</option>
-                <option value="MCE">MCE</option>
+                <option value="MECHANICAL">MECHANICAL</option>
+                <option value="CHEMICAL">CHEMICAL</option>
+                <option value="CIVIL">CIVIL</option>
+                <option value="MSME">MSME</option>
+                <option value="PHD">PHD</option>
+                <option value="MTECH">MTECH</option>
+                <option value="PLANNING">PLANNING</option>
               </select>
               {errors.branch && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.branch.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.branch.message}</p>
               )}
             </div>
 
-            {/* Sport Dropdown */}
             <div className="mb-4">
               <select
                 {...register("sport", { required: "Sport is required" })}
-                onChange={handleSportChange} // Handle sport change
+                onChange={handleSportChange}
                 className={`bg-slate-100 border ${
                   errors.sport ? "border-red-500" : "border-slate-400"
                 } px-4 py-2 w-full rounded-md outline-none`}
               >
                 <option value="">Select Sport</option>
-                <option value="CRICKET">CRICKET</option>
-                <option value="FOOTBALL">FOOTBALL</option>
-                <option value="BASKETBALL">BASKETBALL</option>
-                <option value="TENNIS">TENNIS</option>
-                <option value="BADMINTON">BADMINTON</option>
-                <option value="VOLLEYBALL">VOLLEYBALL</option>
-                <option value="HOCKEY">HOCKEY</option>
-                <option value="TABLE_TENNIS">TABLE TENNIS</option>
-                <option value="CHESS">CHESS</option>
+                <option value="Cricket">Cricket</option>
+                <option value="Football">Football</option>
+                <option value="Basketball">Basketball</option>
+                <option value="Tennis">Tennis</option>
+                <option value="Badminton">Badminton</option>
+                <option value="Volleyball">Volleyball</option>
+                <option value="Hockey">Hockey</option>
+                <option value="TableTennis">Table Tennis</option>
+                <option value="Chess">Chess</option>
               </select>
               {errors.sport && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.sport.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.sport.message}</p>
               )}
             </div>
 
-            {/* Role Dropdown */}
             <div className="mb-4">
               <select
                 {...register("role", { required: "Role is required" })}
-                disabled={roleOptions.length === 0} // Disable if no options are available
+                disabled={!selectedSport} // Disable if no sport is selected
                 className={`bg-slate-100 border ${
                   errors.role ? "border-red-500" : "border-slate-400"
                 } px-4 py-2 w-full rounded-md outline-none`}
@@ -252,88 +257,53 @@ const Signup = () => {
                 ))}
               </select>
               {errors.role && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.role.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
               )}
             </div>
 
-            {/* Email Input */}
-            <div className="mb-4">
-              <input
-                type="email"
-                placeholder="Email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^\S+@\S+$/i,
-                    message: "Invalid email address",
-                  },
-                })}
-                className={`bg-slate-100 border ${
-                  errors.email ? "border-red-500" : "border-slate-400"
-                } px-4 py-2 w-full rounded-md outline-none placeholder-slate-400`}
-                autoComplete="email" // Added autocomplete attribute
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password Input */}
             <div className="mb-4">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
+                {...register("password", { required: "Password is required" })}
                 className={`bg-slate-100 border ${
                   errors.password ? "border-red-500" : "border-slate-400"
                 } px-4 py-2 w-full rounded-md outline-none placeholder-slate-400`}
+                autoComplete="new-password"
               />
-              <div className="flex items-center mt-2">
-                <input
-                  type="checkbox"
-                  id="show-password"
-                  checked={showPassword}
-                  onChange={() => setShowPassword((prev) => !prev)}
-                  className="mr-2"
-                />
-                <label htmlFor="show-password" className="text-gray-700">
-                  Show Password
-                </label>
-              </div>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
               )}
             </div>
 
-            {/* Sign Up Button */}
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="showPassword"
+                onChange={() => setShowPassword(!showPassword)}
+              />
+              <label htmlFor="showPassword" className="ml-2">
+                Show Password
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-slate-600 text-white px-4 py-2 rounded-md w-full hover:bg-slate-800 transition-colors"
+              className="bg-slate-600 text-white py-2 px-4 rounded-md w-full"
             >
               {isSubmitting ? "Signing Up..." : "Sign Up"}
             </button>
           </form>
 
-          {/* Redirect to Login */}
-          <p className="text-center mt-4">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-500">
-              Log In
-            </Link>
-          </p>
+          <div className="mt-4 text-center">
+            <span>
+              Already have an account?{" "}
+              <Link to="/login" className="text-slate-600 font-semibold">
+                Login
+              </Link>
+            </span>
+          </div>
         </div>
       </div>
     </Layout>

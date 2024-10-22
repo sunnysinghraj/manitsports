@@ -7,14 +7,21 @@ const Navbar = () => {
 
   // Load user data from localStorage
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("userData"));
-    setUser(storedUser);
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      try {
+        const storedUser = JSON.parse(storedUserData);
+        setUser(storedUser);
+      } catch (error) {
+        console.error("Error parsing user data from localStorage:", error);
+      }
+    }
   }, []);
 
   // Logout function
   const logout = () => {
     localStorage.removeItem("userData");
-    setUser(null);  // Clear user state
+    setUser(null); // Clear user state
     navigate("/login");
   };
 

@@ -18,6 +18,7 @@ import  ProtectedRouteForAdmin  from "./protectedRoute/ProtectedRouteForAdmin";
 import  ProtectedRouteForUser  from "./protectedRoute/ProtectedRouteForUser";
 import AddEvents from "./pages/admin/AddEvents";
 import UpdateEvent from "./pages/admin/UpdateEvent";
+import StudentDetails from "./components/students/StudentsDetails";
 function App() {
   return (
     <EventState>
@@ -61,6 +62,7 @@ function App() {
             </ProtectedRouteForAdmin>
           } />
           <Route path="/events" element={<Events />} />
+          <Route path="/teams/:sportName" element={<StudentDetails/>} />
         </Routes>
       </Router>
     </EventState>
