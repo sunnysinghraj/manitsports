@@ -66,12 +66,6 @@ const MyEvents = () => {
                   scope="col"
                   className="h-12 px-6 text-md border-l first:border-l-0 border-slate-100 bg-slate-200 font-bold"
                 >
-                  Description
-                </th>
-                <th
-                  scope="col"
-                  className="h-12 px-6 text-md border-l first:border-l-0 border-slate-100 bg-slate-200 font-bold"
-                >
                   Action
                 </th>
               </tr>
@@ -85,8 +79,7 @@ const MyEvents = () => {
                   endDate,
                   startTime,
                   endTime,
-                  place,
-                  description,
+                  place
                 } = event;
                 return (
                   <tr key={id} className="text-slate-600">
@@ -104,9 +97,6 @@ const MyEvents = () => {
                     </td>
                     <td className="h-12 px-6 text-md border-t border-l first:border-l-0 border-slate-100">
                       {place}
-                    </td>
-                    <td className="h-12 px-6 text-md border-t border-l first:border-l-0 border-slate-100">
-                      {description}
                     </td>
                     <td className="h-12 px-6 text-md border-t border-l first:border-l-0 border-slate-100">
                       <Link to={`/updateevent/${id}`} className="text-blue-500 hover:underline">Edit</Link>

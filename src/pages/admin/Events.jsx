@@ -52,12 +52,6 @@ const MyEvents = () => {
                 >
                   Place
                 </th>
-                <th
-                  scope="col"
-                  className="h-12 px-6 text-md font-bold fontPara border-l first:border-l-0 border-pink-100 text-slate-700 bg-slate-100"
-                >
-                  Description
-                </th>
               </tr>
               {getAllEvents.map((event, index) => {
                 const {
@@ -67,8 +61,7 @@ const MyEvents = () => {
                   endDate,
                   startTime,
                   endTime,
-                  place,
-                  description,
+                  place
                 } = event;
                 return (
                   <tr key={id} className="text-slate-300">
@@ -86,9 +79,6 @@ const MyEvents = () => {
                     </td>
                     <td className="h-12 px-6 text-md transition duration-300 border-t border-l first:border-l-0 border-pink-100 stroke-slate-500 text-slate-500">
                       {place}
-                    </td>
-                    <td className="h-12 px-6 text-md transition duration-300 border-t border-l first:border-l-0 border-pink-100 stroke-slate-500 text-slate-500">
-                      {description}
                     </td>
                   </tr>
                 );

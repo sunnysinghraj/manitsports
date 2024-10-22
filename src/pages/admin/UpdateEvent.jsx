@@ -29,7 +29,6 @@ const UpdateEvent = () => {
         setValue("startTime", eventData.startTime);
         setValue("endTime", eventData.endTime);
         setValue("place", eventData.place);
-        setValue("description", eventData.description);
       } else {
         toast.error("Event not found.");
         navigate("/events");
@@ -45,7 +44,7 @@ const UpdateEvent = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    const { eventName, startDate, endDate, startTime, endTime, place, description } = data;
+    const { eventName, startDate, endDate, startTime, endTime, place} = data;
 
     try {
       // Update the event in Firestore using the same event ID from URL (params)
@@ -56,7 +55,6 @@ const UpdateEvent = () => {
         startTime,
         endTime,
         place,
-        description,
         updatedAt: new Date(), // Track the update time
         id, // Keep the same event ID
       }, { merge: true }); // Use merge to only update the fields provided without overwriting the document
@@ -179,23 +177,6 @@ const UpdateEvent = () => {
                 </p>
               )}
             </div>
-
-            {/* Description Input */}
-            <div className="mb-4">
-              <textarea
-                placeholder="Description"
-                {...register("description", { required: "Description is required" })}
-                className={`bg-slate-100 border ${
-                  errors.description ? "border-red-500" : "border-slate-400"
-                } px-4 py-2 w-full rounded-md outline-none placeholder-slate-400`}
-              />
-              {errors.description && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
-
             {/* Submit Button */}
             <button
               type="submit"
