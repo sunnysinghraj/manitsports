@@ -38,11 +38,11 @@ const Signup = () => {
       "Power Forward",
       "Center",
     ],
-    TENNIS: ["Singles Player", "Doubles Player"],
-    BADMINTON: ["Singles Player", "Doubles Player"],
+    TENNIS: ["Player"],
+    BADMINTON: ["Player"],
     VOLLEYBALL: ["Outside Hitter", "Setter", "Libero"],
     HOCKEY: ["Forward", "Defenseman", "Goalie"],
-    TABLE_TENNIS: ["Singles Player", "Doubles Player"],
+    TABLETENNIS: ["Player"], // Ensure it's in uppercase
     CHESS: ["Player"],
   };
 
@@ -114,7 +114,6 @@ const Signup = () => {
       toast.success("Signup successful!");
       navigate("/login"); // Redirect to login
     } catch (error) {
-      // console.error("Error writing to Firestore:", error);
       toast.error("Failed to store user data in Firestore. Please try again.");
     }
   };
@@ -130,6 +129,7 @@ const Signup = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Name Field */}
             <div className="mb-4">
               <input
                 type="text"
@@ -145,6 +145,7 @@ const Signup = () => {
               )}
             </div>
 
+            {/* Scholar Number Field */}
             <div className="mb-4">
               <input
                 type="text"
@@ -155,8 +156,6 @@ const Signup = () => {
                     value: /^\d{9}$/,
                     message: "Scholar Number must be exactly 9 digits",
                   },
-                  validate: (value) =>
-                    value.length === 9 || "Scholar Number must be exactly 9 digits",
                 })}
                 onInput={(e) => {
                   const value = e.target.value.replace(/\D/g, "").slice(0, 9);
@@ -168,10 +167,13 @@ const Signup = () => {
                 autoComplete="scholarNo"
               />
               {errors.scholarNo && (
-                <p className="text-red-500 text-sm mt-1">{errors.scholarNo.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.scholarNo.message}
+                </p>
               )}
             </div>
 
+            {/* Email Field */}
             <div className="mb-4">
               <input
                 type="email"
@@ -193,6 +195,7 @@ const Signup = () => {
               )}
             </div>
 
+            {/* Branch Field */}
             <div className="mb-4">
               <select
                 {...register("branch", { required: "Branch is required" })}
@@ -213,10 +216,13 @@ const Signup = () => {
                 <option value="PLANNING">PLANNING</option>
               </select>
               {errors.branch && (
-                <p className="text-red-500 text-sm mt-1">{errors.branch.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.branch.message}
+                </p>
               )}
             </div>
 
+            {/* Sport Field */}
             <div className="mb-4">
               <select
                 {...register("sport", { required: "Sport is required" })}
@@ -241,68 +247,78 @@ const Signup = () => {
               )}
             </div>
 
-            <div className="mb-4">
-              <select
-                {...register("role", { required: "Role is required" })}
-                disabled={!selectedSport} // Disable if no sport is selected
-                className={`bg-slate-100 border ${
-                  errors.role ? "border-red-500" : "border-slate-400"
-                } px-4 py-2 w-full rounded-md outline-none`}
-              >
-                <option value="">Select Role</option>
-                {roleOptions.map((role) => (
-                  <option key={role} value={role}>
-                    {role}
-                  </option>
-                ))}
-              </select>
-              {errors.role && (
-                <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
-              )}
-            </div>
+            {/* Role Field */}
+            {selectedSport && (
+              <div className="mb-4">
+                <select
+                  {...register("role", { required: "Role is required" })}
+                  className={`bg-slate-100 border ${
+                    errors.role ? "border-red-500" : "border-slate-400"
+                  } px-4 py-2 w-full rounded-md outline-none`}
+                >
+                  <option value="">Select Role</option>
+                  {roleOptions.map((role, index) => (
+                    <option key={index} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+                {errors.role && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.role.message}
+                  </p>
+                )}
+              </div>
+            )}
 
-            <div className="mb-4">
+            {/* Password Field */}
+            <div className="mb-4 relative">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                {...register("password", { required: "Password is required" })}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters long",
+                  },
+                })}
                 className={`bg-slate-100 border ${
                   errors.password ? "border-red-500" : "border-slate-400"
                 } px-4 py-2 w-full rounded-md outline-none placeholder-slate-400`}
                 autoComplete="new-password"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-slate-400"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
-            <div className="flex items-center mb-4">
-              <input
-                type="checkbox"
-                id="showPassword"
-                onChange={() => setShowPassword(!showPassword)}
-              />
-              <label htmlFor="showPassword" className="ml-2">
-                Show Password
-              </label>
+            {/* Submit Button */}
+            <div className="mb-4">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-slate-600 text-white px-4 py-2 w-full rounded-md hover:bg-slate-700 transition duration-200 disabled:bg-gray-400"
+              >
+                {isSubmitting ? "Signing Up..." : "Sign Up"}
+              </button>
             </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-slate-600 text-white py-2 px-4 rounded-md w-full"
-            >
-              {isSubmitting ? "Signing Up..." : "Sign Up"}
-            </button>
           </form>
 
-          <div className="mt-4 text-center">
-            <span>
-              Already have an account?{" "}
-              <Link to="/login" className="text-slate-600 font-semibold">
-                Login
-              </Link>
-            </span>
+          <div className="text-center">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Login
+            </Link>
           </div>
         </div>
       </div>
