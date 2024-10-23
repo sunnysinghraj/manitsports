@@ -114,7 +114,7 @@ const Signup = () => {
       toast.success("Signup successful!");
       navigate("/login"); // Redirect to login
     } catch (error) {
-      console.error("Error writing to Firestore:", error);
+      // console.error("Error writing to Firestore:", error);
       toast.error("Failed to store user data in Firestore. Please try again.");
     }
   };

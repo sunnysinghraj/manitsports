@@ -9,18 +9,19 @@ const AdminDashboard = () => {
   // Effect to load admin data from local storage
   useEffect(() => {
     const storedAdmin = localStorage.getItem("userData");
-    console.log("Stored Admin:", storedAdmin); // Debugging log
+    // console.log("Stored Admin:", storedAdmin); // Debugging log
 
     if (storedAdmin) {
       try {
         const parsedAdmin = JSON.parse(storedAdmin);
-        console.log("Parsed Admin:", parsedAdmin); // Debugging log
+        // console.log("Parsed Admin:", parsedAdmin); // Debugging log
         // Check if the user is an admin based on the "work" field
         if (parsedAdmin.work === "Admin") {
           setAdmin(parsedAdmin);
         }
       } catch (error) {
-        console.error("Error parsing admin from localStorage:", error);
+        // console.error("Error parsing admin from localStorage:", error);
+        toast.error('Failed to fetch admin. Please try again later.');
       }
     }
   }, []);

@@ -25,7 +25,8 @@ function EventState({ children }) {
       });
       return () => unsubscribe();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      toast.error('Failed to fetch events. Please try again later.');
     }
   };
 
@@ -42,7 +43,8 @@ function EventState({ children }) {
       });
       return () => unsubscribe();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      toast.error('Failed to fetch students. Please try again later.');
     }
   };
 

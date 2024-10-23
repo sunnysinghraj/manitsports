@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
+import toast from "react-hot-toast";
 
 const UserDashboard = () => {
   const [user, setUser] = useState(null);
@@ -7,15 +8,16 @@ const UserDashboard = () => {
   // Effect to load user data from local storage
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");
-    console.log("Stored User:", storedUser); // Debugging log
+    // console.log("Stored User:", storedUser); // Debugging log
 
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        console.log("Parsed User:", parsedUser); // Debugging log
+        // console.log("Parsed User:", parsedUser); // Debugging log
         setUser(parsedUser);
       } catch (error) {
-        console.error("Error parsing user from localStorage:", error);
+        // console.error("Error parsing user from localStorage:", error);
+            toast.error("Error occured.kindly login again")
       }
     }
   }, []);

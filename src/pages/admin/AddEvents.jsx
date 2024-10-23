@@ -36,7 +36,7 @@ const AddEvent = () => {
       toast.success("Event added successfully!");
       navigate("/events"); // Redirect to events page or desired route
     } catch (error) {
-      console.error("Error writing to Firestore:", error);
+      // console.error("Error writing to Firestore:", error);
       toast.error("Failed to add event. Please try again.");
     }
   };

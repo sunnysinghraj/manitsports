@@ -15,7 +15,7 @@ const MyEvents = () => {
       await deleteDoc(doc(fireDB, "events", id)); 
       toast.success("Event deleted successfully");
     } catch (error) {
-      console.error("Error deleting event: ", error);
+      // console.error("Error deleting event: ", error);
       toast.error("Failed to delete event");
     }
   };

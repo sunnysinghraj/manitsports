@@ -3,7 +3,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { fireDB } from "../../firebase/FirebaseConfig";
 import Layout from "../layout/Layout";
-
+import toast from "react-hot-toast";
 const branchOrder = [
   "CSE",
   "ECE",
@@ -34,7 +34,7 @@ const StudentDetails = () => {
         studentArray.push({ ...doc.data(), id: doc.id });
       });
 
-      console.log("Fetched Students:", studentArray); // Log fetched students
+      // console.log("Fetched Students:", studentArray); // Log fetched students
 
       const studentsGrouped = {};
       studentArray.forEach((student) => {
@@ -45,7 +45,7 @@ const StudentDetails = () => {
         studentsGrouped[branch].push(student);
       });
 
-      console.log("Students Grouped by Branch:", studentsGrouped); // Log grouped students
+      // console.log("Students Grouped by Branch:", studentsGrouped); // Log grouped students
 
       // Sort students in each branch by scholar number
       Object.keys(studentsGrouped).forEach(branch => {
@@ -55,7 +55,8 @@ const StudentDetails = () => {
       setStudentsByBranch(studentsGrouped);
     } catch (error) {
       setError('Failed to fetch students. Please try again later.');
-      console.log(error);
+      // console.log(error);
+      toast.error('Failed to fetch students. Please try again later.');
     } finally {
       setLoading(false);
     }

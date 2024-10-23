@@ -34,7 +34,7 @@ const UpdateEvent = () => {
         navigate("/events");
       }
     } catch (error) {
-      console.error("Error fetching event:", error);
+      // console.error("Error fetching event:", error);
       toast.error("Failed to fetch event.");
     }
   };
