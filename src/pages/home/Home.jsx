@@ -8,7 +8,7 @@ const Home = () => {
       <div className="flex flex-col justify-center items-center py-6 space-y-3 my-10">
         <div className="">
           <img
-            src="../../../public/homePic.png"
+            src="/homePic.png"
             alt=""
             className="max-h-[181px] max-w-[180px]"
           />
